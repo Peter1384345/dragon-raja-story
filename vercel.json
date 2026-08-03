@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "dragon-story",
+  "builds": [
+    {
+      "src": "dragon-story.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/dragon-story.html"
+    }
+  ]
+}
