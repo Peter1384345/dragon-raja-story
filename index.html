@@ -2066,6 +2066,171 @@
       .rating-grid { grid-template-columns: 1fr; }
     }
 
+
+    /* ==========================================================
+       Atlas 可视化增强模块
+       ========================================================== */
+    .viz-note {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.25rem;
+      line-height: 1.85;
+    }
+
+    /* --- 角色筛选 chip --- */
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-bottom: 1.35rem;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.42rem 0.95rem;
+      border-radius: 999px;
+      border: 1px solid var(--glass-border-strong);
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: var(--muted);
+      font-family: var(--font);
+      font-size: 0.88rem;
+      line-height: 1.4;
+      cursor: pointer;
+      transition: color 0.25s ease, border-color 0.25s ease,
+                  background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .chip .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.5;
+      transition: opacity 0.25s ease, box-shadow 0.25s ease;
+      flex: none;
+    }
+    .chip:hover {
+      color: var(--ink);
+      border-color: rgba(233,69,96,0.45);
+      transform: translateY(-1px);
+    }
+    .chip.on {
+      color: var(--ink);
+      background: rgba(233,69,96,0.15);
+      border-color: var(--accent);
+      box-shadow: 0 0 16px rgba(233,69,96,0.2);
+    }
+    .chip.on .dot {
+      opacity: 1;
+      box-shadow: 0 0 8px currentColor;
+    }
+    .chip.dim {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    .chip.dim:hover { transform: none; border-color: var(--glass-border-strong); }
+
+    /* --- 图表容器 --- */
+    .viz-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(430px, 1fr));
+      gap: 1.5rem;
+    }
+    .viz-box {
+      background: var(--glass-strong);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border-strong);
+      border-radius: 18px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 50px rgba(0,0,0,0.5), inset 0 0 100px rgba(233,69,96,0.04);
+      min-width: 0;
+    }
+    .viz-box h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent-gold);
+      margin-bottom: 0.9rem;
+      text-align: center;
+      text-shadow: 0 0 12px rgba(255,215,0,0.2);
+    }
+    .viz-hint {
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 0.7rem;
+      line-height: 1.7;
+    }
+
+    /* --- 战力读数 --- */
+    .power-readout {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 0.85rem;
+      margin-top: 1.35rem;
+    }
+    .power-cell {
+      background: rgba(13,13,32,0.5);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .power-cell:hover {
+      border-color: rgba(255,215,0,0.35);
+      box-shadow: 0 0 18px rgba(255,215,0,0.08);
+    }
+    .pc-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .pc-swatch {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex: none;
+      box-shadow: 0 0 8px currentColor;
+    }
+    .pc-sum {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent-gold);
+      text-shadow: 0 0 12px rgba(255,215,0,0.25);
+      line-height: 1.2;
+    }
+    .pc-top {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    /* --- 谱系树说明 --- */
+    .tree-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.1rem;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .tree-legend .tl-item { display: inline-flex; align-items: center; gap: 0.4rem; }
+    .tree-legend .tl-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+
+    @media (max-width: 900px) {
+      .viz-grid-2 { grid-template-columns: 1fr; }
+      .chip { font-size: 0.8rem; padding: 0.36rem 0.78rem; }
+      .viz-box { padding: 1.1rem; }
+    }
   </style>
 </head>
 <body>
@@ -2084,8 +2249,10 @@
     <div class="nav-inner">
       <a class="nav-btn active" href="#sec-relations">人物关系</a>
       <a class="nav-btn" href="#sec-info">角色详情</a>
-      <a class="nav-btn" href="#sec-plot">分卷剧情</a>
-      <a class="nav-btn" href="#sec-battles">经典战役</a>
+            <a class="nav-btn" href="#sec-power">战力对比</a>
+<a class="nav-btn" href="#sec-plot">分卷剧情</a>
+            <a class="nav-btn" href="#sec-pulse">卷次强度</a>
+<a class="nav-btn" href="#sec-battles">经典战役</a>
       <a class="nav-btn" href="#sec-timeline">事件时间线</a>
       <a class="nav-btn" href="#sec-world">世界观设定</a>
       <a class="nav-btn" href="#sec-alchemy">炼金术与科技</a>
@@ -2093,11 +2260,13 @@
       <a class="nav-btn" href="#sec-quotes">经典语录</a>
       <a class="nav-btn" href="#sec-trivia">幕后彩蛋</a>
       <a class="nav-btn" href="#sec-dragons">龙王图鉴</a>
-      <a class="nav-btn" href="#sec-families">家族谱系</a>
+            <a class="nav-btn" href="#sec-dragon-tree">龙王谱系</a>
+<a class="nav-btn" href="#sec-families">家族谱系</a>
       <a class="nav-btn" href="#sec-weapons">武器图鉴</a>
       <a class="nav-btn" href="#sec-scenes">经典场景</a>
       <a class="nav-btn" href="#sec-ranks">血统评级</a>
       <a class="nav-btn" href="#sec-fates">角色命运</a>
+      <a class="nav-btn" href="#sec-destiny">命运流向</a>
     </div>
   </nav>
 
@@ -2156,6 +2325,22 @@
       <div class="info-panel" id="info-panel">
         <div class="info-placeholder">点击上方关系图中的任意人物头像，查看详细介绍</div>
       </div>
+    </section>
+
+
+    <!-- ========== 角色战力对比 ========== -->
+    <section id="sec-power" class="reveal">
+      <h2>角色战力对比</h2>
+      <p class="viz-note">以六维能力模型量化核心角色的综合战力。<strong class="highlight">点击下方角色标签可加入或移出对比</strong>，最多同时比较 5 人。评分为基于原作表现的梳理估算，用于横向比较，非官方数值设定。</p>
+
+      <div class="chip-group" id="power-chips"></div>
+
+      <figure class="chart-figure">
+        <figcaption>核心角色六维战力雷达</figcaption>
+        <div id="chart-power" style="width:100%;min-height:560px"></div>
+      </figure>
+
+      <div class="power-readout" id="power-readout"></div>
     </section>
 
     <section id="sec-plot">
@@ -2223,6 +2408,26 @@
     </section>
 
     <!-- ========== 经典战役 ========== -->
+
+    <!-- ========== 卷次剧情强度 ========== -->
+    <section id="sec-pulse" class="reveal">
+      <h2>卷次剧情强度</h2>
+      <p class="viz-note">按卷统计关键剧情要素的密度变化，呈现《龙族》系列的节奏起伏——哪一卷新角色集中登场、哪一卷牺牲最重、哪一卷龙王接连苏醒。数据为基于已出版五卷内容的梳理统计。</p>
+
+      <div class="viz-grid-2">
+        <div class="viz-box">
+          <h3>剧情要素总量分布</h3>
+          <div id="chart-pulse-bar" style="width:100%;min-height:430px"></div>
+          <p class="viz-hint">堆叠柱形：各卷「新增角色 / 重大战役 / 言灵登场 / 龙王觉醒」的数量构成</p>
+        </div>
+        <div class="viz-box">
+          <h3>牺牲人数与剧情烈度走势</h3>
+          <div id="chart-pulse-line" style="width:100%;min-height:430px"></div>
+          <p class="viz-hint">柱状为该卷重要角色牺牲人数，折线为依据要素加权得出的综合烈度指数</p>
+        </div>
+      </div>
+    </section>
+
     <section id="sec-battles">
       <h2>经典战役</h2>
       <p style="color:var(--muted); margin-bottom:1.5rem;">龙族系列中那些令人热血沸腾的巅峰对决，每一场都改变了角色的命运。</p>
@@ -3936,6 +4141,26 @@
     </section>
 
     <!-- ========== 家族谱系 ========== -->
+
+    <!-- ========== 龙王血脉谱系 ========== -->
+    <section id="sec-dragon-tree" class="reveal">
+      <h2>龙王血脉谱系</h2>
+      <p class="viz-note">自黑王尼德霍格起，向下梳理白王与四大君主的血脉分支、孪生共治关系，以及它们在人间留下的代理与后裔。<strong class="highlight">点击节点可展开或收起下级分支</strong>，悬停查看权能说明。</p>
+
+      <div class="tree-legend">
+        <span class="tl-item"><span class="tl-dot" style="background:#e94560"></span>龙族始祖</span>
+        <span class="tl-item"><span class="tl-dot" style="background:#ffd700"></span>君主本体</span>
+        <span class="tl-item"><span class="tl-dot" style="background:#8b5cf6"></span>孪生共治</span>
+        <span class="tl-item"><span class="tl-dot" style="background:#06b6d4"></span>人间代理 / 后裔</span>
+        <span class="tl-item"><span class="tl-dot" style="background:#9090b8"></span>尚未苏醒</span>
+      </div>
+
+      <figure class="chart-figure">
+        <figcaption>龙族血脉与权能谱系树</figcaption>
+        <div id="chart-dragon-tree" style="width:100%;min-height:700px"></div>
+      </figure>
+    </section>
+
     <section id="sec-families">
       <h2>混血种家族谱系</h2>
       <p style="color:var(--muted); margin-bottom:1.5rem;">龙族世界中传承千年的混血种家族，他们隐藏在人类文明背后，守护着屠龙使命，也争夺着龙族遗留的权与力。</p>
@@ -4617,6 +4842,18 @@
           </div>
         </div>
       </div>
+    </section>
+
+
+    <!-- ========== 阵营与命运流向 ========== -->
+    <section id="sec-destiny" class="reveal">
+      <h2>阵营与命运流向</h2>
+      <p class="viz-note">左侧为角色所属阵营，右侧为其截至《龙族Ⅴ》的最终归宿。色带宽度与流经的角色数量成正比，可直观看出各阵营的伤亡分布与去向；结局以已出版内容为准，标「命运未卜」者仍在连载中。</p>
+
+      <figure class="chart-figure">
+        <figcaption>阵营 → 角色 → 最终归宿 流向图</figcaption>
+        <div id="chart-destiny" style="width:100%;min-height:760px"></div>
+      </figure>
     </section>
 
   </article>
