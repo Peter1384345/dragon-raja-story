@@ -746,4 +746,494 @@
   };
 
   window.addEventListener('resize', function() { chart.resize(); });
+
+  /* ============================================================
+     Atlas 可视化增强模块
+     1) 角色战力雷达  2) 卷次剧情强度
+     3) 龙王血脉谱系  4) 阵营与命运流向
+     ============================================================ */
+
+  var TOOLTIP_BASE = {
+    backgroundColor: 'rgba(13,13,32,0.94)',
+    borderColor: 'rgba(233,69,96,0.4)',
+    borderWidth: 1,
+    padding: [8, 12],
+    textStyle: { color: '#eaeaf4', fontSize: 13 },
+    extraCssText: 'box-shadow:0 8px 32px rgba(0,0,0,0.6);border-radius:10px;'
+  };
+  var AXIS_LABEL = { color: '#9090b8', fontSize: 11.5 };
+  var SPLIT_LINE = { lineStyle: { color: 'rgba(255,255,255,0.06)' } };
+  var AXIS_LINE  = { lineStyle: { color: 'rgba(255,255,255,0.15)' } };
+  var LEGEND_BASE = {
+    bottom: 0,
+    itemWidth: 13,
+    itemHeight: 13,
+    itemGap: 16,
+    textStyle: { color: '#9090b8', fontSize: 12 }
+  };
+
+  function mergeTip(cfg) {
+    var out = {};
+    for (var k in TOOLTIP_BASE) { out[k] = TOOLTIP_BASE[k]; }
+    for (var k2 in cfg) { out[k2] = cfg[k2]; }
+    return out;
+  }
+
+  /* ---------- 1. 角色战力雷达 ---------- */
+  (function initPowerRadar() {
+    var el = document.getElementById('chart-power');
+    if (!el) return;
+
+    var DIMS = ['血统强度', '体术格斗', '言灵威力', '武器掌握', '谋略智慧', '意志信念'];
+    var DATA = {
+      lumingfei:    { name: '路明非',     v: [100, 32, 95, 42, 56, 72], color: '#e94560', note: 'S级血统 · 与路鸣泽的三次交易' },
+      chuzihang:    { name: '楚子航',     v: [88, 90, 85, 80, 70, 95],  color: '#2ed573', note: '言灵·君焰 · 禁忌秘术爆血' },
+      kaisa:        { name: '凯撒',       v: [85, 85, 75, 90, 80, 80],  color: '#ffd700', note: '言灵·镰鼬 · 加图索家族继承人' },
+      huiliyi:      { name: '上杉绘梨衣', v: [95, 40, 100, 22, 32, 62], color: '#ff6b9d', note: '言灵·审判 · 月读命' },
+      angre:        { name: '昂热',       v: [90, 95, 88, 90, 100, 95], color: '#8b5cf6', note: '秘党领袖 · 百年积累的战斗智慧' },
+      nuonuo:       { name: '诺诺',       v: [80, 70, 56, 66, 90, 76],  color: '#06b6d4', note: 'A级侧写师 · 情报与洞察见长' },
+      xiami:        { name: '夏弥',       v: [98, 76, 92, 52, 95, 66],  color: '#f97316', note: '大地与山之王 · 耶梦加得' },
+      yuanzhisheng: { name: '源稚生',     v: [82, 88, 78, 86, 86, 70],  color: '#a3e635', note: '言灵·白樱 · 蛇岐八家之皇' },
+      yuanzhinv:    { name: '源稚女',     v: [84, 92, 80, 88, 62, 56],  color: '#ef4444', note: '恶鬼风间琉璃 · 纯粹的杀戮机器' },
+      feneger:      { name: '芬格尔',     v: [76, 80, 60, 76, 86, 78],  color: '#94a3b8', note: '表面G级 · 真实实力成谜' },
+      ling:         { name: '零',         v: [78, 82, 60, 70, 66, 70],  color: '#67e8f9', note: '黑天鹅港零号 · 精密的战斗直觉' },
+      meiniieke:    { name: '梅涅克',     v: [86, 88, 80, 86, 80, 92],  color: '#fbbf24', note: '初代狮心会 · 夏之哀悼' }
+    };
+
+    var keys = Object.keys(DATA);
+    var MAX_SEL = 5;
+    var selected = ['lumingfei', 'chuzihang', 'kaisa'];
+
+    var chart = echarts.init(el, null, { renderer: 'canvas' });
+
+    function buildOption() {
+      return {
+        tooltip: mergeTip({
+          trigger: 'item',
+          formatter: function (params) {
+            var p = DATA[selected[params.dataIndex]];
+            if (!p) return params.name;
+            var rows = '';
+            for (var i = 0; i < DIMS.length; i++) {
+              rows += '<div style="display:flex;justify-content:space-between;gap:22px;line-height:1.7">' +
+                '<span style="color:#9090b8">' + DIMS[i] + '</span>' +
+                '<span style="color:#ffd700;font-weight:600">' + p.v[i] + '</span></div>';
+            }
+            return '<div style="min-width:180px">' +
+              '<div style="font-weight:700;font-size:14px;margin-bottom:5px;color:' + p.color + '">' + p.name + '</div>' +
+              rows +
+              '<div style="margin-top:7px;padding-top:7px;border-top:1px solid rgba(255,255,255,0.1);color:#9090b8;font-size:12px">' +
+              p.note + '</div></div>';
+          }
+        }),
+        legend: {
+          bottom: 0,
+          itemWidth: 13, itemHeight: 13, itemGap: 16,
+          textStyle: { color: '#9090b8', fontSize: 12 },
+          data: selected.map(function (k) { return DATA[k].name; })
+        },
+        radar: {
+          indicator: DIMS.map(function (d) { return { name: d, max: 100 }; }),
+          shape: 'polygon',
+          splitNumber: 5,
+          center: ['50%', '46%'],
+          radius: '66%',
+          axisName: { color: '#c9c9e0', fontSize: 13, fontWeight: 600, padding: [3, 5] },
+          nameGap: 12,
+          splitLine: { lineStyle: { color: 'rgba(255,255,255,0.09)' } },
+          splitArea: { areaStyle: { color: ['rgba(233,69,96,0.035)', 'rgba(15,52,96,0.07)'] } },
+          axisLine: { lineStyle: { color: 'rgba(255,255,255,0.12)' } }
+        },
+        series: [{
+          type: 'radar',
+          symbolSize: 5,
+          emphasis: { focus: 'series', areaStyle: { opacity: 0.3 } },
+          data: selected.map(function (k) {
+            var p = DATA[k];
+            return {
+              name: p.name,
+              value: p.v,
+              itemStyle: { color: p.color, borderColor: p.color },
+              lineStyle: { color: p.color, width: 2 },
+              areaStyle: { color: p.color, opacity: 0.12 }
+            };
+          })
+        }]
+      };
+    }
+
+    function renderChips() {
+      var box = document.getElementById('power-chips');
+      if (!box) return;
+      var html = '';
+      for (var i = 0; i < keys.length; i++) {
+        var k = keys[i], p = DATA[k];
+        var on = selected.indexOf(k) >= 0;
+        var full = !on && selected.length >= MAX_SEL;
+        html += '<button type="button" class="chip' + (on ? ' on' : '') + (full ? ' dim' : '') +
+          '" data-key="' + k + '"' + (on ? ' style="color:' + p.color + '"' : '') + '>' +
+          '<span class="dot"' + (on ? ' style="background:' + p.color + '"' : '') + '></span>' +
+          p.name + '</button>';
+      }
+      box.innerHTML = html;
+
+      var btns = box.querySelectorAll('.chip');
+      for (var j = 0; j < btns.length; j++) {
+        btns[j].addEventListener('click', function () {
+          var key = this.getAttribute('data-key');
+          var idx = selected.indexOf(key);
+          if (idx >= 0) {
+            if (selected.length <= 1) return;
+            selected.splice(idx, 1);
+          } else {
+            if (selected.length >= MAX_SEL) return;
+            selected.push(key);
+          }
+          chart.setOption(buildOption(), true);
+          renderChips();
+          renderReadout();
+        });
+      }
+    }
+
+    function renderReadout() {
+      var box = document.getElementById('power-readout');
+      if (!box) return;
+      var html = '';
+      for (var i = 0; i < selected.length; i++) {
+        var p = DATA[selected[i]];
+        var sum = 0, top = 0;
+        for (var j = 0; j < p.v.length; j++) {
+          sum += p.v[j];
+          if (p.v[j] > p.v[top]) top = j;
+        }
+        var avg = Math.round(sum / p.v.length);
+        html += '<div class="power-cell">' +
+          '<div class="pc-name"><span class="pc-swatch" style="background:' + p.color + ';color:' + p.color + '"></span>' + p.name + '</div>' +
+          '<div class="pc-sum">' + avg + '<span style="font-size:0.75rem;color:#9090b8;font-weight:400"> 综合</span></div>' +
+          '<div class="pc-top">最强项 · ' + DIMS[top] + ' ' + p.v[top] + '</div>' +
+          '</div>';
+      }
+      box.innerHTML = html;
+    }
+
+    chart.setOption(buildOption());
+    renderChips();
+    renderReadout();
+    window.addEventListener('resize', function () { chart.resize(); });
+  })();
+
+  /* ---------- 2. 卷次剧情强度 ---------- */
+  (function initPulse() {
+    var barEl = document.getElementById('chart-pulse-bar');
+    var lineEl = document.getElementById('chart-pulse-line');
+    if (!barEl && !lineEl) return;
+
+    var VOLUMES = ['Ⅰ 火之晨曦', 'Ⅱ 悼亡者之瞳', 'Ⅲ 黑月之潮', 'Ⅳ 奥丁之渊', 'Ⅴ 悼亡者的归来'];
+    var PULSE = {
+      chars:   [12, 10, 18, 8, 9],
+      battles: [3, 4, 7, 4, 3],
+      yanling: [5, 6, 11, 7, 6],
+      dragons: [1, 1, 2, 1, 1],
+      deaths:  [2, 2, 6, 1, 1]
+    };
+    var INTENSITY = [];
+    for (var i = 0; i < VOLUMES.length; i++) {
+      INTENSITY.push(Math.round(
+        PULSE.chars[i] * 1 + PULSE.battles[i] * 6 + PULSE.yanling[i] * 2 +
+        PULSE.dragons[i] * 10 + PULSE.deaths[i] * 5
+      ));
+    }
+
+    var xAxis = {
+      type: 'category',
+      data: VOLUMES,
+      axisLabel: { color: '#9090b8', fontSize: 11, interval: 0, rotate: 18, margin: 12 },
+      axisLine: AXIS_LINE,
+      axisTick: { show: false }
+    };
+
+    if (barEl) {
+      var bar = echarts.init(barEl, null, { renderer: 'canvas' });
+      bar.setOption({
+        tooltip: mergeTip({ trigger: 'axis', axisPointer: { type: 'shadow' } }),
+        legend: { bottom: 0, itemWidth: 12, itemHeight: 12, itemGap: 14, textStyle: { color: '#9090b8', fontSize: 11.5 } },
+        grid: { left: '2%', right: '4%', top: '10%', bottom: '20%', containLabel: true },
+        xAxis: xAxis,
+        yAxis: {
+          type: 'value',
+          name: '数量',
+          nameTextStyle: { color: '#9090b8', fontSize: 11 },
+          axisLabel: AXIS_LABEL,
+          splitLine: SPLIT_LINE
+        },
+        series: [
+          { name: '新增角色', type: 'bar', stack: 'total', barWidth: '52%', itemStyle: { color: '#06b6d4' }, data: PULSE.chars },
+          { name: '重大战役', type: 'bar', stack: 'total', itemStyle: { color: '#e94560' }, data: PULSE.battles },
+          { name: '言灵登场', type: 'bar', stack: 'total', itemStyle: { color: '#8b5cf6' }, data: PULSE.yanling },
+          { name: '龙王觉醒', type: 'bar', stack: 'total', itemStyle: { color: '#ffd700' }, data: PULSE.dragons }
+        ]
+      });
+      window.addEventListener('resize', function () { bar.resize(); });
+    }
+
+    if (lineEl) {
+      var line = echarts.init(lineEl, null, { renderer: 'canvas' });
+      line.setOption({
+        tooltip: mergeTip({ trigger: 'axis', axisPointer: { type: 'cross' } }),
+        legend: { bottom: 0, itemWidth: 12, itemHeight: 12, itemGap: 14, textStyle: { color: '#9090b8', fontSize: 11.5 } },
+        grid: { left: '2%', right: '3%', top: '12%', bottom: '20%', containLabel: true },
+        xAxis: xAxis,
+        yAxis: [
+          {
+            type: 'value', name: '牺牲 / 人',
+            nameTextStyle: { color: '#9090b8', fontSize: 11 },
+            axisLabel: AXIS_LABEL, splitLine: SPLIT_LINE
+          },
+          {
+            type: 'value', name: '烈度指数',
+            nameTextStyle: { color: '#9090b8', fontSize: 11 },
+            axisLabel: AXIS_LABEL, splitLine: { show: false }
+          }
+        ],
+        series: [
+          {
+            name: '重要角色牺牲', type: 'bar', barWidth: '38%',
+            itemStyle: { color: 'rgba(233,69,96,0.78)', borderRadius: [5, 5, 0, 0] },
+            data: PULSE.deaths
+          },
+          {
+            name: '综合烈度指数', type: 'line', yAxisIndex: 1,
+            smooth: true, symbol: 'circle', symbolSize: 9,
+            lineStyle: { color: '#ffd700', width: 3, shadowColor: 'rgba(255,215,0,0.5)', shadowBlur: 10 },
+            itemStyle: { color: '#ffd700', borderColor: '#fff', borderWidth: 1.5 },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: 'rgba(255,215,0,0.3)' },
+                { offset: 1, color: 'rgba(255,215,0,0)' }
+              ])
+            },
+            data: INTENSITY
+          }
+        ]
+      });
+      window.addEventListener('resize', function () { line.resize(); });
+    }
+  })();
+
+  /* ---------- 3. 龙王血脉谱系 ---------- */
+  (function initDragonTree() {
+    var el = document.getElementById('chart-dragon-tree');
+    if (!el) return;
+
+    var C_ANCESTOR = '#e94560';
+    var C_MONARCH  = '#ffd700';
+    var C_TWIN     = '#8b5cf6';
+    var C_AGENT    = '#06b6d4';
+    var C_DORMANT  = '#9090b8';
+
+    var TREE = {
+      name: '黑王 · 尼德霍格',
+      value: '龙族始祖、至高统治者，被称为「绝望之龙」。言灵·皇帝（序列 01）对所有龙族与混血种具备绝对统治力。传说他已然死去，但归来的预言始终笼罩世界。',
+      itemStyle: { color: C_ANCESTOR },
+      children: [
+        {
+          name: '白王 · 圣骸',
+          value: '龙族中唯一能与黑王并肩的存在，掌控精神元素。曾发动叛乱对抗黑王，失败后被处以「六界封印」，血裔延续为蛇岐八家。',
+          itemStyle: { color: C_MONARCH },
+          children: [
+            {
+              name: '白王血裔 · 蛇岐八家',
+              value: '承载白王血脉的日本混血种集团，由内三家与外五家构成，世代守护白王圣骸的秘密。',
+              itemStyle: { color: C_AGENT },
+              children: [
+                { name: '上杉家 · 绘梨衣（月读命）', value: '言灵·审判，足以冰封整个东京。被赫尔佐格作为白王复活的容器抽干血液而死。', itemStyle: { color: C_AGENT } },
+                { name: '源家 · 源稚生（皇）', value: '蛇岐八家最高领袖，言灵·白樱。最终与弟弟源稚女一同落入红井。', itemStyle: { color: C_AGENT } },
+                { name: '源家 · 源稚女（风间琉璃）', value: '源稚生孪生弟弟，幼年被赫尔佐格带走折磨后人格分裂，成为令人闻风丧胆的恶鬼。', itemStyle: { color: C_AGENT } },
+                { name: '上杉越', value: '蛇岐八家前任「皇」，源稚生、源稚女与绘梨衣的基因之父。', itemStyle: { color: C_AGENT } }
+              ]
+            },
+            {
+              name: '新白王 · 赫尔佐格',
+              value: '黑天鹅港的疯狂科学家，以「王将」身份潜伏数十年，最终在红井窃取白王圣骸之力，化身新白王，被路明非第三次交易后击杀。',
+              itemStyle: { color: '#ef4444' }
+            }
+          ]
+        },
+        {
+          name: '青铜与火之王',
+          value: '四大君主之一，掌控火焰与金属的至高权能。曾在三峡水下重铸青铜城，作为自莲化之地。',
+          itemStyle: { color: C_MONARCH },
+          children: [
+            { name: '诺顿（化名李熊）', value: '言灵·烛龙，已知最强攻击型言灵之一，威力足以蒸干整条长江。七宗罪的铸造者。', itemStyle: { color: C_TWIN } },
+            { name: '康斯坦丁（孪生）', value: '诺顿的孪生弟弟，同为青铜与火之王。于《龙族Ⅰ》三峡之战中被击杀。', itemStyle: { color: C_TWIN } }
+          ]
+        },
+        {
+          name: '大地与山之王',
+          value: '四大君主之一，掌控大地与山脉的权能，能引发毁灭性的地质灾难。',
+          itemStyle: { color: C_MONARCH },
+          children: [
+            { name: '耶梦加得（夏弥）', value: '龙族中最聪明的存在，化名夏弥潜伏于卡塞尔学院。最终选择被哥哥芬里厄吞噬，成为完整的龙王。', itemStyle: { color: C_TWIN } },
+            { name: '芬里厄（孪生）', value: '耶梦加得的孪生哥哥，长期以白茧形态沉睡。觉醒后吞噬妹妹成为完整的大地與山之王，最终被击杀。', itemStyle: { color: C_TWIN } }
+          ]
+        },
+        {
+          name: '海洋与水之王',
+          value: '四大君主之一，掌控海洋与水流。至今未在正篇中完全苏醒，传说沉睡于世界最深的海沟，茧外有万吨海水护持。亚特兰蒂斯、百慕大等谜团据传与其有关。',
+          itemStyle: { color: C_DORMANT }
+        },
+        {
+          name: '天空与风之王',
+          value: '四大君主之一，掌控天空与风暴。同样未完全展露真身，其苏醒或带来席卷全球的气象灾难。',
+          itemStyle: { color: C_MONARCH },
+          children: [
+            { name: '奥丁（疑似化身）', value: '掌握「存在抹除」之力的神秘存在，曾于 000 号高架桥带走楚天骄，并在《龙族Ⅳ》中将楚子航从世界记忆中彻底抹去。', itemStyle: { color: C_AGENT } }
+          ]
+        }
+      ]
+    };
+
+    var chart = echarts.init(el, null, { renderer: 'canvas' });
+    chart.setOption({
+      tooltip: mergeTip({
+        trigger: 'item',
+        triggerOn: 'mousemove',
+        formatter: function (params) {
+          var d = params.data;
+          if (!d) return '';
+          if (!d.value) return '<b>' + d.name + '</b>';
+          return '<div style="max-width:270px;white-space:normal;line-height:1.65">' +
+            '<div style="font-weight:700;color:#ffd700;font-size:13.5px;margin-bottom:5px">' + d.name + '</div>' +
+            '<div style="color:#c9c9e0">' + d.value + '</div></div>';
+        }
+      }),
+      series: [{
+        type: 'tree',
+        data: [TREE],
+        left: '3%', right: '22%', top: '3%', bottom: '3%',
+        symbol: 'circle',
+        symbolSize: 13,
+        orient: 'LR',
+        expandAndCollapse: true,
+        initialTreeDepth: 3,
+        roam: true,
+        label: {
+          position: 'top',
+          align: 'left',
+          verticalAlign: 'bottom',
+          distance: 6,
+          rotate: 0,
+          color: '#eaeaf4',
+          fontSize: 12.5,
+          fontWeight: 500
+        },
+        leaves: {
+          label: { position: 'right', align: 'left', verticalAlign: 'middle', distance: 8 }
+        },
+        emphasis: { focus: 'descendant' },
+        animationDuration: 550,
+        animationDurationUpdate: 750
+      }]
+    });
+    window.addEventListener('resize', function () { chart.resize(); });
+  })();
+
+  /* ---------- 4. 阵营与命运流向 ---------- */
+  (function initDestiny() {
+    var el = document.getElementById('chart-destiny');
+    if (!el) return;
+
+    var FACTION_COLOR = {
+      '卡塞尔学院': '#06b6d4',
+      '秘党高层':   '#8b5cf6',
+      '蛇岐八家':   '#ffd700',
+      '加图索家族': '#2ed573',
+      '龙族君主':   '#e94560',
+      '黑天鹅港':   '#94a3b8',
+      '路明非家系': '#ff6b9d',
+      '存活':       '#2ed573',
+      '牺牲':       '#ffd700',
+      '被击杀 / 消亡': '#e94560',
+      '失踪 / 被抹除': '#8b5cf6',
+      '命运未卜':   '#9090b8'
+    };
+
+    var FLOW = [
+      ['卡塞尔学院', '路明非',      '命运未卜'],
+      ['卡塞尔学院', '楚子航',      '存活'],
+      ['卡塞尔学院', '诺诺',        '存活'],
+      ['卡塞尔学院', '芬格尔',      '存活'],
+      ['卡塞尔学院', '零',          '存活'],
+      ['卡塞尔学院', '苏茜',        '存活'],
+      ['卡塞尔学院', '叶胜',        '牺牲'],
+      ['卡塞尔学院', '酒德亚纪',    '牺牲'],
+      ['秘党高层',   '昂热',        '存活'],
+      ['秘党高层',   '曼斯',        '存活'],
+      ['秘党高层',   '弗拉梅尔',    '存活'],
+      ['秘党高层',   '古德里安',    '存活'],
+      ['秘党高层',   '梅涅克·卡塞尔', '牺牲'],
+      ['加图索家族', '凯撒',        '存活'],
+      ['蛇岐八家',   '源稚生',      '牺牲'],
+      ['蛇岐八家',   '源稚女',      '牺牲'],
+      ['蛇岐八家',   '上杉绘梨衣',  '牺牲'],
+      ['蛇岐八家',   '矢吹樱',      '牺牲'],
+      ['蛇岐八家',   '上杉越',      '牺牲'],
+      ['龙族君主',   '诺顿',        '被击杀 / 消亡'],
+      ['龙族君主',   '康斯坦丁',    '被击杀 / 消亡'],
+      ['龙族君主',   '夏弥',        '牺牲'],
+      ['龙族君主',   '芬里厄',      '被击杀 / 消亡'],
+      ['龙族君主',   '白王圣骸',    '被击杀 / 消亡'],
+      ['龙族君主',   '奥丁',        '命运未卜'],
+      ['黑天鹅港',   '赫尔佐格',    '被击杀 / 消亡'],
+      ['路明非家系', '路麟城',      '失踪 / 被抹除'],
+      ['路明非家系', '乔薇尼',      '失踪 / 被抹除'],
+      ['路明非家系', '路鸣泽',      '命运未卜']
+    ];
+
+    var seen = {}, nodes = [], links = [];
+    function addNode(name) {
+      if (seen[name]) return;
+      seen[name] = 1;
+      var n = { name: name };
+      if (FACTION_COLOR[name]) n.itemStyle = { color: FACTION_COLOR[name], borderColor: 'rgba(255,255,255,0.18)' };
+      nodes.push(n);
+    }
+    for (var i = 0; i < FLOW.length; i++) {
+      addNode(FLOW[i][0]);
+      addNode(FLOW[i][1]);
+      addNode(FLOW[i][2]);
+      links.push({ source: FLOW[i][0], target: FLOW[i][1], value: 1 });
+      links.push({ source: FLOW[i][1], target: FLOW[i][2], value: 1 });
+    }
+
+    var chart = echarts.init(el, null, { renderer: 'canvas' });
+    chart.setOption({
+      tooltip: mergeTip({
+        trigger: 'item',
+        triggerOn: 'mousemove',
+        formatter: function (params) {
+          if (params.dataType === 'edge') {
+            return '<div style="font-size:13px">' + params.data.source +
+              ' <span style="color:#e94560">→</span> ' + params.data.target + '</div>';
+          }
+          return '<div style="font-weight:600;color:#ffd700">' + params.name + '</div>';
+        }
+      }),
+      series: [{
+        type: 'sankey',
+        left: 12, right: 140, top: 22, bottom: 22,
+        data: nodes,
+        links: links,
+        nodeWidth: 15,
+        nodeGap: 9,
+        nodeAlign: 'left',
+        draggable: false,
+        emphasis: { focus: 'adjacency' },
+        label: { color: '#eaeaf4', fontSize: 12.5, fontWeight: 500 },
+        lineStyle: { color: 'gradient', opacity: 0.4, curveness: 0.5 }
+      }]
+    });
+    window.addEventListener('resize', function () { chart.resize(); });
+  })();
 })();
