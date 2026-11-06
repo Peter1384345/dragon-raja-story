@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>龙族探索台 V2 | 羁绊矩阵 / 阅读时间轴 / 抉择树 / 台词抽签</title>
+  <meta name="description" content="龙族探索台 V2：角色羁绊矩阵热力图、系列阅读时间轴、互动剧情抉择树、经典台词抽签与意象星云">
+  <link rel="preconnect" href="https://fonts.loli.net" crossorigin>
+  <link href="https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="_shared/css/site.css">
+</head>
+<body>
+
+  <div class="vignette"></div>
+
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <a class="nav-btn" href="index.html">首页</a>
+      <a class="nav-btn" href="characters.html">人物</a>
+      <a class="nav-btn" href="story.html">剧情</a>
+      <a class="nav-btn" href="world.html">世界观</a>
+      <a class="nav-btn" href="moments.html">图鉴语录</a>
+      <a class="nav-btn" href="fate.html">命运</a>
+      <a class="nav-btn active" style="color:#ffd700;border-color:rgba(255,215,0,.45)" href="explore.html">V2 探索台</a>
+    </div>
+  </nav>
+  <article class="page">
+    <div class="hero">
+      <span class="beam2"></span>
+      <h1>龙族探索台</h1>
+      <div class="dragon-divider"></div>
+      <div class="subtitle">羁绊矩阵 · 阅读时间轴 · 剧情抉择树 · 台词抽签 · 意象星云</div>
+      <div class="author">粉丝向整理，仅供学习交流</div>
+    </div>
+    <div class="page-anchors reveal">
+      <a href="#v2-bonds">羁绊矩阵</a>
+      <a href="#v2-books">阅读时间轴</a>
+      <a href="#v2-tree">抉择树</a>
+      <a href="#v2-quotes">台词抽签</a>
+      <a href="#v2-nebula">意象星云</a>
+    </div>
+
+    <section id="v2-bonds" class="reveal">
+      <div class="v2-head"><span class="no">01</span><h2>角色羁绊矩阵</h2></div>
+      <p class="v2-desc">以粉丝视角为十二位核心角色两两之间的"羁绊强度"打分（0-100，越高羁绊越深）。悬停查看评注。数值为主观整理，欢迎在仓库 Issue 中讨论修订。</p>
+      <div class="v2-card">
+        <div id="chart-bonds" class="v2-chart"></div>
+        <div class="v2-note">数据：粉丝向主观评分 · ECharts 热力图</div>
+      </div>
+    </section>
+
+    <section id="v2-books" class="reveal">
+      <div class="v2-head"><span class="no">02</span><h2>系列阅读时间轴</h2></div>
+      <p class="v2-desc">按剧情内时间轴排列的系列阅读地图：横轴为故事内时间先后，纵轴按作品分道。年份为约数，具体以出版信息为准。</p>
+      <div class="v2-card">
+        <div id="chart-books" class="v2-chart" style="height:420px"></div>
+        <div class="v2-note">建议阅读顺序：I → II → III → IV → V，前传可最后补完</div>
+      </div>
+    </section>
+
+    <section id="v2-tree" class="reveal">
+      <div class="v2-head"><span class="no">03</span><h2>互动剧情抉择树 <span class="tag-spec">粉丝推演 · 非官方</span></h2></div>
+      <p class="v2-desc">"如果当时……会怎样？"点击节点展开粉丝向的剧情推演分支。所有分支均为假设性讨论，不代表原作走向。</p>
+      <div class="v2-card"><div class="v2-tree" id="tree-root"></div></div>
+    </section>
+
+    <section id="v2-quotes" class="reveal">
+      <div class="v2-head"><span class="no">04</span><h2>经典台词抽签</h2></div>
+      <p class="v2-desc">点击抽取一句龙族系列广为流传的句子。句子为粉丝整理，个别措辞可能与原文略有出入。</p>
+      <div class="v2-card draw-box">
+        <div class="draw-card" id="quote-card">「点击下方按钮，抽取一句来自龙族世界的话。」</div>
+        <div class="draw-from" id="quote-from"></div>
+        <div style="margin-top:1.4rem"><button class="v2-btn" id="draw-btn">抽 取</button></div>
+      </div>
+    </section>
+
+    <section id="v2-nebula" class="reveal">
+      <div class="v2-head"><span class="no">05</span><h2>意象星云</h2></div>
+      <p class="v2-desc">龙族世界的经典意象：学院、龙类、言灵、神器与组织。鼠标悬停可放大。</p>
+      <div class="v2-card v2-nebula" id="nebula"></div>
+    </section>
+
+    <footer>
+      <p>本页面内容基于江南《龙族》系列小说整理</p>
+      <p>仅供学习交流使用</p>
+    </footer>
+
+    <!-- Update Button -->
+    <button class="update-btn" id="updateBtn" onclick="openUpdatePanel()">
+      <span class="update-icon">&#x27F3;</span>
+      <span>更新内容</span>
+    </button>
+
+    <!-- Update Toast -->
+    <div class="update-toast" id="updateToast">
+      <span class="toast-icon">&#x2713;</span>
+      <span id="toastText">内容已更新</span>
+    </div>
+
+    <!-- Update Panel -->
+    <div class="update-panel" id="updatePanel">
+      <div class="update-panel-inner">
+        <h3>&#x2728; 内容更新中心</h3>
+        <p>选择要更新的内容类别，系统将自动向对应版块添加新内容</p>
+        <div class="update-actions">
+          <button class="update-action-btn" onclick="doUpdate('quotes')">&#x1F4AC; 经典语录</button>
+          <button class="update-action-btn" onclick="doUpdate('trivia')">&#x1F3B2; 幕后彩蛋</button>
+          <button class="update-action-btn" onclick="doUpdate('battles')">&#x2694; 经典战役</button>
+          <button class="update-action-btn" onclick="doUpdate('yanling')">&#x2726; 言灵知识</button>
+          <button class="update-action-btn" onclick="doUpdate('alchemy')">&#x2697; 炼金科技</button>
+          <button class="update-action-btn" onclick="doUpdate('random')">&#x1F3B1; 随机更新</button>
+        </div>
+        <button class="update-close" onclick="closeUpdatePanel()">关闭</button>
+      </div>
+    </div>
+
+    <!-- ========== 龙王图鉴 ========== -->  </article>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+  <script>window.ECharts || document.write('<script src="_shared/js/echarts.min.js"><\/script>');</script>
+  <script>
+
+const CHARS = ['路明非','楚子航','恺撒','诺诺','夏弥','绘梨衣','芬格尔','源稚生','源稚女','昂热','路鸣泽','陈雯雯'];
+
+const BONDS = [
+  ['路明非','楚子航',92,'狮心会并肩作战，相互托付后背的战友'],
+  ['路明非','恺撒',85,'从情敌到生死之交，希腊圣殿中的并肩'],
+  ['路明非','诺诺',95,'地铁里的初遇，贯穿全系列的羁绊主线'],
+  ['路明非','芬格尔',88,'卡塞尔宿舍损友，关键时刻最可靠的学长'],
+  ['路明非','路鸣泽',90,'「哥哥」——血缘与交易纠缠的宿命之线'],
+  ['路明非','陈雯雯',60,'旧日同窗，平凡世界与龙族世界的交汇点'],
+  ['楚子航','恺撒',78,'王与王的较量与认可'],
+  ['楚子航','诺诺',70,'狮心会内部的默契搭档'],
+  ['恺撒','诺诺',82,'加图索家与学生会主席的联谊之谊'],
+  ['诺诺','夏弥',55,'截然不同的两位 S 级少女'],
+  ['路明非','夏弥',93,'尼伯龙根里的相遇，「哥哥与小怪兽」'],
+  ['路明非','绘梨衣',96,'「Sakura~」——最温柔也最沉重的羁绊'],
+  ['源稚生','源稚女',97,'蛇岐八家的兄妹，命运互为镜像'],
+  ['源稚生','路明非',75,'东京篇的对手与某种意义上的同路人'],
+  ['昂热','路明非',80,'校长与「S级备选」之间的注视'],
+  ['楚子航','路鸣泽',65,'列车上的对峙，深渊的低语']
+];
+
+const BOOKS = [
+  { name: '龙族 I · 火之晨曦',   x: 2009, lane: 1, desc: '卡塞尔学院的入学邀请，地铁里的血统觉醒' },
+  { name: '龙族 II · 悼亡者之瞳', x: 2010, lane: 2, desc: '青铜与火之王苏醒，三峡之上的决战' },
+  { name: '龙族 III · 黑月之潮', x: 2012, lane: 3, desc: '东京篇：蛇岐八家、源氏兄妹与高天原' },
+  { name: '龙族 IV · 奥丁之渊',  x: 2015, lane: 4, desc: '北欧篇：冰海之下的奥丁遗产' },
+  { name: '龙族 V · 悼亡者的归来', x: 2018, lane: 5, desc: '终局拉开，诸王陨落与最后的王座' }
+];
+
+const TREE = {
+  q: '如果路明非在地铁上没有伸手救下诺诺？',
+  children: [
+    { path: '分支 A', text: '他不会收到卡塞尔学院的邀请函，继续做一个成绩普通的宅男——直到龙类找到这个 S 级血统为止，命运只是换了一条更暗的巷子。' },
+    { path: '分支 B', text: '诺诺受伤但被昂热的秘密行动组救下，路明非仍会因血统监测被学院注意，「普通人生」只是被推迟了一个学期。' },
+    { path: '分支 C', text: '那一刻的犹豫让他彻底错过觉醒契机，四分之一血统的封印更深，后期「王选」格局将完全改写。' }
+  ],
+  sub: [
+    { q: '如果恺撒在希腊没有放手让诺诺离开？', children: [
+      { path: '分支 A', text: '学生会长与狮心会的裂痕提前爆发，三人组的信任危机成为黑月之潮前的内伤。' },
+      { path: '分支 B', text: '恺撒学会了体面地退场——加图索家的继承人第一次明白了「有些喜欢只能目送」。' }
+    ]},
+    { q: '如果绘梨衣没有登上那趟旅程？', children: [
+      { path: '分支 A', text: '「Sakura」的八音盒永远不会被打开，东京篇会成为纯粹的黑夜——没有糖果色的例外。' },
+      { path: '分支 B', text: '她活下来，但蛇岐八家的政斗将用另一种方式夺走她的自由，温柔无法豁免宿命。' }
+    ]}
+  ]
+};
+
+const QUOTES = [
+  ['哥哥，把你的一切都卖给我吧。', '路鸣泽'],
+  ['我们一路奋战，不是为了改变世界，而是为了不让世界改变我们。', '读者常引 · 龙族'],
+  ['命运救赎不了任何人，能拯救你的只有你自己。', '昂热校长（传述）'],
+  ['小怪兽，别怕。', '路明非 · 尼伯龙根'],
+  ['所谓王的资格，就是明知不可为而为之。', '卡塞尔学院 · 粉丝整理'],
+  ['人类 fear 龙类，龙类 fear 人类中的疯子。', '学院箴言（粉丝转述）'],
+  ['Sakura~ 要一直一直在一起哦。', '绘梨衣'],
+  ['世上有两种人，一种是 King，另一种是等着被 King 统治的人。', '恺撒 · 加图索']
+];
+
+const NEBULA_WORDS = [
+  ['卡塞尔学院',26,'#e94560'],['青铜与火之王',20,'#ffd700'],['昆古尼尔',18,'#8b5cf6'],
+  ['村雨',16,'#06b6d4'],['狮心会',15,'#e94560'],['言灵',22,'#ffd700'],
+  ['尼伯龙根',21,'#8b5cf6'],['EVA',14,'#06b6d4'],['血统',19,'#e94560'],
+  ['龙王',24,'#ffd700'],['蛇岐八家',17,'#8b5cf6'],['诺玛',13,'#06b6d4'],
+  ['龙文',15,'#ffd700'],['屠龙',18,'#e94560'],['炼金术',16,'#8b5cf6'],
+  ['死侍',13,'#06b6d4'],['混血种',20,'#e94560'],['王座',17,'#ffd700'],
+  ['火之晨曦',15,'#8b5cf6'],['黑月之潮',16,'#06b6d4'],['奥丁之渊',14,'#e94560']
+];
+
+/* ============ 羁绊矩阵 ============ */
+const bondsChart = echarts.init(document.getElementById('chart-bonds'));
+(function () {
+  const names = CHARS;
+  const data = [];
+  const maxMap = {};
+  BONDS.forEach(([a,b,v,note]) => {
+    data.push({ value:[names.indexOf(a), names.indexOf(b), v], note });
+    data.push({ value:[names.indexOf(b), names.indexOf(a), v], note });
+  });
+  bondsChart.setOption({
+    backgroundColor: 'transparent',
+    tooltip: {
+      formatter: p => {
+        const d = p.data.note ? `${names[p.value[0]]} × ${names[p.value[1]]}<br/>羁绊强度：${p.value[2]}<br/><span style="color:#9090b8">${p.data.note}</span>` : `${names[p.value[0]]} × ${names[p.value[1]]}<br/>羁绊强度：${p.value[2]||'—'}`;
+        return d;
+      }
+    },
+    grid: { left: 90, bottom: 90, right: 20, top: 20 },
+    xAxis: { type: 'category', data: names, axisLabel: { color: '#9090b8', rotate: 40, fontSize: 11 }, axisLine: { lineStyle: { color: '#252550' } } },
+    yAxis: { type: 'category', data: names, axisLabel: { color: '#9090b8', fontSize: 11 }, axisLine: { lineStyle: { color: '#252550' } } },
+    visualMap: {
+      min: 0, max: 100, calculable: false, orient: 'horizontal',
+      left: 'center', bottom: 0,
+      inRange: { color: ['#141430', '#0f3460', '#8b5cf6', '#e94560', '#ffd700'] },
+      textStyle: { color: '#9090b8' }
+    },
+    series: [{
+      type: 'heatmap',
+      data,
+      label: { show: true, color: '#eaeaf4', fontSize: 9, formatter: p => p.value[2] || '' },
+      itemStyle: { borderColor: '#060612', borderWidth: 1, borderRadius: 3 },
+      emphasis: { itemStyle: { shadowBlur: 12, shadowColor: 'rgba(233,69,96,.6)' } }
+    }]
+  });
+})();
+
+/* ============ 阅读时间轴 ============ */
+const booksChart = echarts.init(document.getElementById('chart-books'));
+(function () {
+  const lanes = ['','I','II','III','IV','V'];
+  booksChart.setOption({
+    backgroundColor: 'transparent',
+    tooltip: { formatter: p => `<b>${p.data.name}</b><br/>故事内时间（约）：${p.value[0]} 年<br/>${p.data.desc}` },
+    grid: { left: 60, right: 40, top: 30, bottom: 50 },
+    xAxis: { type: 'value', min: 2008, max: 2019, axisLabel: { color: '#9090b8', formatter: v => v + ' 年' }, splitLine: { lineStyle: { color: 'rgba(37,37,80,.6)' } } },
+    yAxis: { type: 'value', min: 0.5, max: 5.5, interval: 1, axisLabel: { color: '#ffd700', formatter: v => lanes[v] || '' }, splitLine: { show: false } },
+    series: [{
+      type: 'scatter', symbolSize: 34,
+      data: BOOKS.map(b => ({ value: [b.x, b.lane], name: b.name, desc: b.desc })),
+      label: { show: true, position: 'right', color: '#eaeaf4', fontSize: 12, formatter: p => p.data.name },
+      itemStyle: {
+        color: new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#e94560'},{offset:1,color:'#ffd700'}]),
+        shadowBlur: 16, shadowColor: 'rgba(233,69,96,.5)'
+      }
+    }],
+    graphic: [{ type: 'text', left: 64, top: 8, style: { text: '剧情内时间 →', fill: '#9090b8', fontSize: 12 } }]
+  });
+})();
+
+/* ============ 抉择树 ============ */
+(function renderTree() {
+  const root = document.getElementById('tree-root');
+  const mkQ = (q, children) => {
+    const wrap = document.createElement('div'); wrap.className = 'node';
+    const qEl = document.createElement('div'); qEl.className = 'node q';
+    qEl.innerHTML = `<div class="q-text">${q}</div>`;
+    const box = document.createElement('div'); box.className = 'children';
+    children.forEach(c => {
+      const a = document.createElement('div'); a.className = 'node a';
+      a.innerHTML = `<div class="a-path">${c.path}</div><div class="a-text">${c.text}</div>`;
+      box.appendChild(a);
+    });
+    qEl.addEventListener('click', () => qEl.classList.toggle('open'));
+    wrap.appendChild(qEl); wrap.appendChild(box);
+    return wrap;
+  };
+  root.appendChild(mkQ(TREE.q, TREE.children));
+  TREE.sub.forEach(s => root.appendChild(mkQ(s.q, s.children)));
+})();
+
+/* ============ 台词抽签 ============ */
+(function () {
+  const card = document.getElementById('quote-card');
+  const from = document.getElementById('quote-from');
+  const btn = document.getElementById('draw-btn');
+  let last = -1;
+  btn.addEventListener('click', () => {
+    let i; do { i = Math.floor(Math.random() * QUOTES.length); } while (i === last && QUOTES.length > 1);
+    last = i;
+    card.classList.add('fade');
+    setTimeout(() => {
+      card.textContent = `「${QUOTES[i][0]}」`;
+      from.textContent = `—— ${QUOTES[i][1]}`;
+      card.classList.remove('fade');
+    }, 350);
+  });
+})();
+
+/* ============ 意象星云 ============ */
+(function () {
+  const box = document.getElementById('nebula');
+  const W = () => box.clientWidth, H = 340;
+  NEBULA_WORDS.forEach(([w, size, color]) => {
+    const s = document.createElement('span');
+    s.textContent = w;
+    s.style.fontSize = size + 'px';
+    s.style.color = color;
+    s.style.opacity = 0.4 + size / 40;
+    // 简单避让：随机放置并回退几次
+    let placed = false;
+    for (let t = 0; t < 30 && !placed; t++) {
+      const x = Math.random() * (W() - w.length * size * 0.62 - 20) + 10;
+      const y = Math.random() * (H - size - 16) + 8;
+      s.style.left = x + 'px'; s.style.top = y + 'px';
+      const r = s.getBoundingClientRect();
+      placed = ![...box.children].some(el => {
+        const b = el.getBoundingClientRect();
+        return !(r.right < b.left || r.left > b.right || r.bottom < b.top || r.top > b.bottom);
+      });
+    }
+    if (!placed && box.contains(s)) box.removeChild(s); else box.appendChild(s);
+  });
+})();
+
+  /* ============ 滚动显现 & resize ============ */
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); }), { threshold: .12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  window.addEventListener('resize', () => { bondsChart.resize(); booksChart.resize(); });
+  </script>
+
+  <script src="_shared/js/page.js"></script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>龙族 · 人物篇 | 关系图谱 / 角色详情 / 战力对比</title>
+  <meta name="description" content="龙族人物可视化：核心人物关系图、角色详情档案与战力雷达对比">
+  <link rel="preconnect" href="https://fonts.loli.net" crossorigin>
+  <link href="https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="_shared/css/site.css">
+</head>
+<body>
+
+  <div class="vignette"></div>
+
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <a class="nav-btn" href="index.html">首页</a>
+      <a class="nav-btn active" href="characters.html">人物</a>
+      <a class="nav-btn" href="story.html">剧情</a>
+      <a class="nav-btn" href="world.html">世界观</a>
+      <a class="nav-btn" href="moments.html">图鉴语录</a>
+      <a class="nav-btn" href="fate.html">命运</a>
+      <a class="nav-btn" style="color:#ffd700;border-color:rgba(255,215,0,.45)" href="explore.html">V2 探索台</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <span class="beam2"></span>
+    <h1>龙 族</h1>
+    <div class="dragon-divider"></div>
+    <div class="subtitle">龙族人物可视化：核心人物关系图、角色详情档案与战力雷达对比</div>
+    <div class="author">作者：江南 · 粉丝向整理</div>
+  </div>
+  <article class="page">
+    <div class="page-anchors reveal">
+        <a href="#sec-relations">核心人物关系图</a>
+        <a href="#sec-info">人物详细信息</a>
+        <a href="#sec-power">角色战力对比</a>
+
+    </div>
+    <section id="sec-relations">
+      <h2>核心人物关系图</h2>
+      <p>点击人物头像可查看详细信息，拖拽可移动节点，滚轮可缩放。关系线颜色代表不同关系类型。</p>
+
+      <div class="toolbar">
+        <div class="toolbar-group">
+          <span class="toolbar-label">搜索</span>
+          <input type="text" class="tool-search" id="char-search" placeholder="输入角色名..." oninput="searchCharacter(this.value)">
+        </div>
+        <div class="toolbar-sep"></div>
+        <div class="toolbar-group">
+          <span class="toolbar-label">关系</span>
+          <button class="tool-btn active" onclick="filterRelation('all');setActive(this)">全部</button>
+          <button class="tool-btn" onclick="filterRelation('protagonist');setActive(this)" style="border-color:#e94560">主角线</button>
+          <button class="tool-btn" onclick="filterRelation('romance');setActive(this)" style="border-color:#ff6b9d">感情线</button>
+          <button class="tool-btn" onclick="filterRelation('ally');setActive(this)" style="border-color:#2ed573">师友</button>
+          <button class="tool-btn" onclick="filterRelation('enemy');setActive(this)" style="border-color:#ff4757">敌对</button>
+          <button class="tool-btn" onclick="filterRelation('family');setActive(this)" style="border-color:#ffd700">血缘</button>
+          <button class="tool-btn" onclick="filterRelation('subordinate');setActive(this)" style="border-color:#7c3aed">从属</button>
+        </div>
+        <div class="toolbar-sep"></div>
+        <div class="toolbar-group">
+          <span class="toolbar-label">卷次</span>
+          <button class="tool-btn" onclick="highlightBook('all');setActive(this)">全部</button>
+          <button class="tool-btn" onclick="highlightBook(1);setActive(this)">Ⅰ</button>
+          <button class="tool-btn" onclick="highlightBook(2);setActive(this)">Ⅱ</button>
+          <button class="tool-btn" onclick="highlightBook(3);setActive(this)">Ⅲ</button>
+          <button class="tool-btn" onclick="highlightBook(4);setActive(this)">Ⅳ</button>
+          <button class="tool-btn" onclick="highlightBook(5);setActive(this)">Ⅴ</button>
+        </div>
+        <div class="toolbar-sep"></div>
+        <button class="tool-btn" onclick="resetGraph()" style="background:var(--accent);color:#fff;border-color:var(--accent)">重置</button>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><div class="legend-line" style="background:#e94560"></div>主角线</div>
+        <div class="legend-item"><div class="legend-line" style="background:#ff6b9d"></div>感情线</div>
+        <div class="legend-item"><div class="legend-line" style="background:#2ed573"></div>师友/同盟</div>
+        <div class="legend-item"><div class="legend-line" style="background:#ff4757"></div>敌对/杀害</div>
+        <div class="legend-item"><div class="legend-line" style="background:#ffd700"></div>血缘/家族</div>
+        <div class="legend-item"><div class="legend-line" style="background:#7c3aed"></div>从属/控制</div>
+      </div>
+      <figure class="chart-figure">
+        <figcaption>龙族全系列人物关系网络</figcaption>
+        <div id="chart-relations" style="width:100%;min-height:750px"></div>
+      </figure>
+    </section>
+
+    <section id="sec-info">
+      <h2>人物详细信息</h2>
+      <div class="info-panel" id="info-panel">
+        <div class="info-placeholder">点击上方关系图中的任意人物头像，查看详细介绍</div>
+      </div>
+    </section>
+
+
+    <!-- ========== 角色战力对比 ========== -->
+    <section id="sec-power" class="reveal">
+      <h2>角色战力对比</h2>
+      <p class="viz-note">以六维能力模型量化核心角色的综合战力。<strong class="highlight">点击下方角色标签可加入或移出对比</strong>，最多同时比较 5 人。评分为基于原作表现的梳理估算，用于横向比较，非官方数值设定。</p>
+
+      <div class="chip-group" id="power-chips"></div>
+
+      <figure class="chart-figure">
+        <figcaption>核心角色六维战力雷达</figcaption>
+        <div id="chart-power" style="width:100%;min-height:560px"></div>
+      </figure>
+
+      <div class="power-readout" id="power-readout"></div>
+    </section>
+
+    <footer>
+      <p>本页面内容基于江南《龙族》系列小说整理</p>
+      <p>仅供学习交流使用</p>
+    </footer>
+
+    <!-- Update Button -->
+    <button class="update-btn" id="updateBtn" onclick="openUpdatePanel()">
+      <span class="update-icon">&#x27F3;</span>
+      <span>更新内容</span>
+    </button>
+
+    <!-- Update Toast -->
+    <div class="update-toast" id="updateToast">
+      <span class="toast-icon">&#x2713;</span>
+      <span id="toastText">内容已更新</span>
+    </div>
+
+    <!-- Update Panel -->
+    <div class="update-panel" id="updatePanel">
+      <div class="update-panel-inner">
+        <h3>&#x2728; 内容更新中心</h3>
+        <p>选择要更新的内容类别，系统将自动向对应版块添加新内容</p>
+        <div class="update-actions">
+          <button class="update-action-btn" onclick="doUpdate('quotes')">&#x1F4AC; 经典语录</button>
+          <button class="update-action-btn" onclick="doUpdate('trivia')">&#x1F3B2; 幕后彩蛋</button>
+          <button class="update-action-btn" onclick="doUpdate('battles')">&#x2694; 经典战役</button>
+          <button class="update-action-btn" onclick="doUpdate('yanling')">&#x2726; 言灵知识</button>
+          <button class="update-action-btn" onclick="doUpdate('alchemy')">&#x2697; 炼金科技</button>
+          <button class="update-action-btn" onclick="doUpdate('random')">&#x1F3B1; 随机更新</button>
+        </div>
+        <button class="update-close" onclick="closeUpdatePanel()">关闭</button>
+      </div>
+    </div>
+
+    <!-- ========== 龙王图鉴 ========== -->
+  </article>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+  <script>window.ECharts || document.write('<script src="_shared/js/echarts.min.js"><\/script>');</script>
+  <script src="assets/charts.js"></script>
+  <script src="_shared/js/page.js"></script>
+</body>
+</html>

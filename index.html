@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>龙族全系列剧情与人物关系</title>
+  <meta name="description" content="龙族系列小说可视化百科首页：人物、剧情、世界观、图鉴、命运与探索台六大主题页导航">
+  <link rel="preconnect" href="https://fonts.loli.net" crossorigin>
+  <link href="https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="_shared/css/site.css">
+</head>
+<body>
+
+  <div class="vignette"></div>
+
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <a class="nav-btn active" href="index.html">首页</a>
+      <a class="nav-btn" href="characters.html">人物</a>
+      <a class="nav-btn" href="story.html">剧情</a>
+      <a class="nav-btn" href="world.html">世界观</a>
+      <a class="nav-btn" href="moments.html">图鉴语录</a>
+      <a class="nav-btn" href="fate.html">命运</a>
+      <a class="nav-btn" style="color:#ffd700;border-color:rgba(255,215,0,.45)" href="explore.html">V2 探索台</a>
+    </div>
+  </nav>
+  <div class="hero">
+    <span class="beam2"></span>
+    <h1>龙 族</h1>
+    <div class="dragon-divider"></div>
+    <div class="subtitle">全系列剧情整理与人物关系图谱</div>
+    <div class="author">作者：江南 · 粉丝向可视化项目</div>
+  </div>
+
+  <article class="page">
+    <p class="landing-intro reveal">
+      「龙族」系列小说的可视化百科：人物、剧情、世界观、名场面与命运，现已拆分为六大主题页面，各有所专、按需探索。
+    </p>
+    <div class="landing-grid">
+      <a class="landing-card reveal" href="characters.html">
+        <div class="lc-icon">🕸️</div>
+        <h3>人物篇<em>CHARACTERS</em></h3>
+        <p>交互式力导向关系图谱、角色详情档案与战力雷达对比。</p>
+        <div class="lc-tags"><span>人物关系</span><span>角色详情</span><span>战力对比</span></div>
+      </a>
+      <a class="landing-card reveal" href="story.html">
+        <div class="lc-icon">📖</div>
+        <h3>剧情篇<em>STORY</em></h3>
+        <p>五部曲分卷剧情、卷次强度曲线、经典战役复盘与全系列事件时间线。</p>
+        <div class="lc-tags"><span>分卷剧情</span><span>卷次强度</span><span>经典战役</span><span>时间线</span></div>
+      </a>
+      <a class="landing-card reveal" href="world.html">
+        <div class="lc-icon">🌍</div>
+        <h3>世界观篇<em>WORLD</em></h3>
+        <p>世界设定、炼金术与科技、势力组织、龙王图鉴与谱系、家族谱系、武器图鉴。</p>
+        <div class="lc-tags"><span>世界观</span><span>龙王图鉴</span><span>家族谱系</span><span>武器</span></div>
+      </a>
+      <a class="landing-card reveal" href="moments.html">
+        <div class="lc-icon">🎭</div>
+        <h3>图鉴篇<em>MOMENTS</em></h3>
+        <p>经典场景、经典语录与幕后彩蛋，一键随机更新新增内容。</p>
+        <div class="lc-tags"><span>经典场景</span><span>经典语录</span><span>幕后彩蛋</span></div>
+      </a>
+      <a class="landing-card reveal" href="fate.html">
+        <div class="lc-icon">🔮</div>
+        <h3>命运篇<em>FATE</em></h3>
+        <p>血统评级榜、主要角色命运档案与命运流向图谱。</p>
+        <div class="lc-tags"><span>血统评级</span><span>角色命运</span><span>命运流向</span></div>
+      </a>
+      <a class="landing-card gold reveal" href="explore.html">
+        <div class="lc-icon">🧭</div>
+        <h3>探索台 V2<em>EXPLORE</em></h3>
+        <p>角色羁绊矩阵热力图、系列阅读时间轴、互动剧情抉择树、台词抽签与意象星云。</p>
+        <div class="lc-tags"><span>羁绊矩阵</span><span>阅读时间轴</span><span>抉择树</span><span>台词抽签</span><span>意象星云</span></div>
+      </a>
+    </div>
+    <footer>
+      <p>本页面内容基于江南《龙族》系列小说整理</p>
+      <p>仅供学习交流使用</p>
+    </footer>
+
+    <!-- Update Button -->
+    <button class="update-btn" id="updateBtn" onclick="openUpdatePanel()">
+      <span class="update-icon">&#x27F3;</span>
+      <span>更新内容</span>
+    </button>
+
+    <!-- Update Toast -->
+    <div class="update-toast" id="updateToast">
+      <span class="toast-icon">&#x2713;</span>
+      <span id="toastText">内容已更新</span>
+    </div>
+
+    <!-- Update Panel -->
+    <div class="update-panel" id="updatePanel">
+      <div class="update-panel-inner">
+        <h3>&#x2728; 内容更新中心</h3>
+        <p>选择要更新的内容类别，系统将自动向对应版块添加新内容</p>
+        <div class="update-actions">
+          <button class="update-action-btn" onclick="doUpdate('quotes')">&#x1F4AC; 经典语录</button>
+          <button class="update-action-btn" onclick="doUpdate('trivia')">&#x1F3B2; 幕后彩蛋</button>
+          <button class="update-action-btn" onclick="doUpdate('battles')">&#x2694; 经典战役</button>
+          <button class="update-action-btn" onclick="doUpdate('yanling')">&#x2726; 言灵知识</button>
+          <button class="update-action-btn" onclick="doUpdate('alchemy')">&#x2697; 炼金科技</button>
+          <button class="update-action-btn" onclick="doUpdate('random')">&#x1F3B1; 随机更新</button>
+        </div>
+        <button class="update-close" onclick="closeUpdatePanel()">关闭</button>
+      </div>
+    </div>
+
+    <!-- ========== 龙王图鉴 ========== -->  </article>
+
+
+  <script src="_shared/js/page.js"></script>
+</body>
+</html>
